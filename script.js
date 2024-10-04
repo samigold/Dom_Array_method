@@ -9,14 +9,15 @@ let data = [];
 
 
 getRandomUser();
-getRandomUser();
+//getRandomUser();
 
-doubleMoney(data);
 
 //console.log(data);
 
 // fetch random user and add money
 async function getRandomUser() {
+  const msg = document.createElement('p');
+  try{
   const res = await fetch('https://randomuser.me/api');
   const data = await res.json()
 
@@ -28,6 +29,15 @@ async function getRandomUser() {
   };
 
   addData(newUser);
+} catch (error) {
+  if(!navigator.onLine){
+    msg.innerText = "No Internet!"
+    main.appendChild(msg);
+  } else{
+    msg.innerText = "No User found!!"
+    main.appendChild(msg);
+}
+}
 }
 
 //Add new obj to data arr
@@ -64,8 +74,32 @@ function doubleMoney() {
   updateDOM();
 }
 
+// //Sort by richest
+function sortByRichest() {
+  data.sort((a,b)=> b.money - a.money);
+  updateDOM();
+}
+
+// //Filter only millionaires
+function showMillionaires() {
+  data = data.filter((amt)=> amt.money > 1000000 && amt.money < 10000000);
+  updateDOM();
+}
+
+// //Calculate the total wealth
+function calculateWealth() {
+const wealth = data.reduce((acc, user)=> (acc += user.money), 0);
+const wealthEl = document.createElement('div');
+wealthEl.classList.add('wealth');
+wealthEl.innerHTML = `<strong>Total Amount</strong>${formatMoney(wealth)}`;
+main.appendChild(wealthEl);
+}
 
 
 //Evennt Listeners
 addUserBtn.addEventListener('click', getRandomUser);
 doubleBtn.addEventListener('click', doubleMoney);
+sortBtn.addEventListener('click', sortByRichest);
+showMillionairesBtn.addEventListener('click', showMillionaires);
+calculateWealthBtn.addEventListener('click', calculateWealth);
+
